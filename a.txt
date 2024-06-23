@@ -1,0 +1,147 @@
+# CNS
+
+Prog 6:
+import javax.crypto.*;
+import javax.crypto.spec.*;
+import java.util.Base64;
+import java.util.Scanner;
+public class AESExample {
+    public static SecretKey generateKey(int n) throws Exception {
+        KeyGenerator kg = KeyGenerator.getInstance("AES");
+        kg.init(n);
+        return kg.generateKey();
+    }
+    public static String encryptDecrypt(String text, SecretKey secretKey, int mode) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(mode, secretKey);
+        byte[] processedBytes = (mode == Cipher.ENCRYPT_MODE) ? cipher.doFinal(text.getBytes()) : cipher.doFinal(Base64.getDecoder().decode(text));
+        return (mode == Cipher.ENCRYPT_MODE) ? Base64.getEncoder().encodeToString(processedBytes) : new String(processedBytes);
+    }
+    public static void main(String[] args) {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter text to encrypt:");
+            String plainText = scanner.nextLine();
+            SecretKey secretKey = generateKey(128);
+            String encryptedText = encryptDecrypt(plainText, secretKey, Cipher.ENCRYPT_MODE);
+            System.out.println("Encrypted Text: " + encryptedText);
+            String decryptedText = encryptDecrypt(encryptedText, secretKey, Cipher.DECRYPT_MODE);
+            System.out.println("Decrypted Text: " + decryptedText);
+            scanner.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Prog 7:
+import java.math.BigInteger;
+import java.util.Scanner;
+public class RSA {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the message to be encrypted:");
+        int msg = scanner.nextInt();
+        System.out.println("Enter the first prime number (p):");
+        int p = scanner.nextInt();
+        System.out.println("Enter the second prime number (q):");
+        int q = scanner.nextInt();
+        int n = p * q;
+        int z = (p - 1) * (q - 1);
+        int d = 0;
+        for (d = 2; d < z; d++) {
+            if (gcd(d, z) == 1) {
+                break;
+            }
+        }
+        int e = 0;
+        for (int i = 0; i <= 9; i++) {
+            int x = 1 + (i * z);
+            if (x % d == 0) {
+                e = x / d;
+                break;
+            }
+        }
+        BigInteger bigMsg = BigInteger.valueOf(msg);
+        BigInteger bigN = BigInteger.valueOf(n);
+        BigInteger encryptedMsg = bigMsg.modPow(BigInteger.valueOf(e), bigN);
+        BigInteger decryptedMsg = encryptedMsg.modPow(BigInteger.valueOf(d), bigN);
+        System.out.println("Encrypted message is : " + encryptedMsg);
+        System.out.println("Decrypted message is : " + decryptedMsg.intValue());
+        scanner.close();
+    }
+    static int gcd(int e, int z) {
+        if (e == 0)
+            return z;
+        else
+            return gcd(z % e, e);
+    }
+}
+
+Prog 8:
+<html>
+<head>
+<title>Diffie-Hellman Key Exchange</title>
+</head>
+<body>
+    <script>
+        let p = BigInt(prompt("Enter the value of p"));
+        let g = BigInt(prompt("Enter the value of g"));
+        let a = BigInt(prompt("Enter Alice's private key a"));
+        let b = BigInt(prompt("Enter Bob's private key b"));
+        let A = (g ** a) % p;
+        let B = (g ** b) % p;
+        let s1 = (B ** a) % p;
+        let s2 = (A ** b) % p;
+        document.write("value of p is "+p+"<br>");
+        document.write("value of g is "+g+"<br>");
+        document.write("value of a is "+a+"<br>");
+        document.write("value of b is "+b+"<br>");
+        document.write("Alice's public value (A): " + A + "<br>");
+        document.write("Bob's public value (B): " + B + "<br>");
+        document.write("Secret key for Alice: " + s1 + "<br>");
+        document.write("Secret key for Bob: " + s2 + "<br>");
+    </script>
+</body>
+</html>
+
+Prog 9:
+import java.security.MessageDigest;
+import java.util.Scanner;
+public class SHA{
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the text to hash: ");
+        String inputText = scanner.nextLine();
+        scanner.close();
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        byte[] messageDigest = md.digest(inputText.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : messageDigest) {
+            hexString.append(String.format("%02x", b));
+        }
+        System.out.println("SHA-512 Hash: " + hexString.toString());
+    }
+}
+
+Prog 10:
+import java.security.MessageDigest;
+import java.util.Scanner;
+public class MD5Example {
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the text to hash: ");
+        String inputText = scanner.nextLine();
+        scanner.close();
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] messageDigest = md.digest(inputText.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : messageDigest) {
+            hexString.append(String.format("%02x", b));
+        }
+        System.out.println("MD5 Hash: " + hexString.toString());
+    }
+}
+
+
+
